@@ -1,7 +1,9 @@
-exports.handler = async () => {
+exports.handler = async (event) => {
+	const { body } = JSON.parse(event.body)
+	
 	const xmlReponse = `<Response>
 							<Message>
-								Ok
+								${body}
 							</Message>
 						</Response>`
 	return {
