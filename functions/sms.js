@@ -1,11 +1,12 @@
 const qs = require('querystring')
 
 exports.handler = async (event) => {
-	const { body } = qs.parse(event.body)
+	const content = qs.parse(event.body)
+	const cmd = content.Body.split(' ')
 	
 	const xmlReponse = `<Response>
 							<Message>
-								${body}
+								${cmd}
 							</Message>
 						</Response>`
 	return {
