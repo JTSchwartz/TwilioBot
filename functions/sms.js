@@ -30,6 +30,7 @@ async function weather(zipCode) {
 
 function isWeatherTypeRain(structure) {
 	structure["weather"].forEach((entry) => {
+		console.log(`${entry["dt"]}: ${entry["main"]}`)
 		if (entry["main"] === "Rain") return true
 	})
 	return  false
@@ -54,7 +55,7 @@ exports.handler = async (event) => {
 	
 	const xmlResponse = `<Response>
 							<Message>
-								${[cmd, response].flat(Infinity)}
+								${response}
 							</Message>
 						</Response>`
 	return {
