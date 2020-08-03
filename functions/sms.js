@@ -43,6 +43,16 @@ exports.handler = async (event) => {
 	
 	switch (cmd.toUpperCase()) {
 		case "JEEP":
+			const jeepData = await weather(args[0])
+			const jeepHours = findNextStorm(jeepData)
+			
+			if (jeepHours === -1) response = "Strip the Jeep naked, you've got at least a couple days"
+			else if (jeepHours === 0) response = "Did you even think about looking out a window before you texted me?"
+			else if (jeepHours === 1) response = "No such luck, it'll start raining soon"
+			else if (jeepHours < 6) response = `You don't have that long, only ${jeepHours} hours till it rains. But we both know it's still worth it.`
+			else response = `It won't start raining for at least ${jeepHours} hours. If that isn't enough time, do you really deserve that Jeep?`
+			
+			break;
 		case "RAIN":
 		case "STORM":
 			const rainData = await weather(args[0])
