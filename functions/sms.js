@@ -56,7 +56,7 @@ exports.handler = async (event) => {
 			break;
 		case "WEATHER":
 			const weatherData = await weather(args[0])
-			const currentWeather = weatherData["current"][0]["main"]
+			const currentWeather = weatherData["current"]["weather"][0]["main"]
 			response = `The current weather is: ${currentWeather}`
 			
 			break
