@@ -46,11 +46,11 @@ exports.handler = async (event) => {
 			const jeepData = await weather(args[0])
 			const jeepHours = findNextStorm(jeepData)
 			
-			if (jeepHours === -1) response = "Strip the Jeep naked, you've got at least a couple days"
+			if (jeepHours === -1) response = "Strip that Jeep naked, you've got at least a couple days."
 			else if (jeepHours === 0) response = "Did you even think about looking out a window before you texted me?"
-			else if (jeepHours === 1) response = "No such luck, it'll start raining soon"
-			else if (jeepHours < 6) response = `You don't have that long, only ${jeepHours} hours till it rains. But we both know it's still worth it.`
-			else response = `It won't start raining for at least ${jeepHours} hours. If that isn't enough time, do you really deserve that Jeep?`
+			else if (jeepHours === 1) response = "No such luck, better keep the doors and roof on. It'll start raining soon."
+			else if (jeepHours < 6) response = `You don't have that long, only ${jeepHours} hours till it rains. But we both know it's still worth it, at least take the doors off.`
+			else response = `It won't start raining for at least ${jeepHours} hours. If that isn't long enough to pull off the doors and roof, do you really deserve that Jeep?`
 			
 			break;
 		case "RAIN":
@@ -71,8 +71,7 @@ exports.handler = async (event) => {
 			
 			break
 		case "?":
-		case "HELP":
-			response = "Schwartz Bot Help:\n-Jeep: Find out how long you can leave the roof off for\n    Text: 'Jeep [ZIPCODE]'\nEx: Jeep 48038\n-Weather: Find out the current weather\n    Text: 'Weather [ZIPCODE]'\nEx: Weather 48038"
+			response = "Schwartz Bot Help:\n- Jeep: Find out how long you can leave the roof off for\n    Text: 'Jeep [ZIPCODE]'\n    Ex: Jeep 48038\n- Weather: Find out the current weather\n    Text: 'Weather [ZIPCODE]'\n    Ex: Weather 48038"
 			break
 	}
 	
