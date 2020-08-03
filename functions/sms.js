@@ -22,7 +22,8 @@ async function weather(zipCode) {
 		.then(response => response.json())
 		.then(data => {
 			return findNextStorm(data)
-		}).catch(() => {
+		}).catch((err) => {
+			console.log(err)
 			return null
 		})
 }
