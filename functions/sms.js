@@ -1,4 +1,5 @@
 const qs = require("querystring")
+const fetch = require("node-fetch");
 
 const weatherApi = "9239c74c31141aa609c11981816de107"
 
