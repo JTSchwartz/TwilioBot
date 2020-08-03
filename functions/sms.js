@@ -1,8 +1,6 @@
 const qs = require("querystring")
 const fetch = require("node-fetch");
 
-const weatherApi = "***REMOVED***"
-
 function findNextStorm(weather) {
 	if (isWeatherTypeRain(weather["current"])) return 0
 	
@@ -16,9 +14,11 @@ function findNextStorm(weather) {
 }
 
 async function weather(zipCode) {
+	if (!zipCode) return null
+	
 	const [lat, lon] = require('../us-zip-code-latitude-and-longitude.json')[zipCode]
 	
-	return await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,daily&units=imperial&appid=${weatherApi}`)
+	return await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,daily&units=imperial&appid=${process.env.WEATHER_API_KEY}`)
 		.then(response => response.json())
 		.then(data => {
 			return data
@@ -44,6 +44,12 @@ exports.handler = async (event) => {
 	switch (cmd.toUpperCase()) {
 		case "JEEP":
 			const jeepData = await weather(args[0])
+			
+			if (!jeepData) {
+				response = "How am I supposed to know the weather if I don't know where you are?"
+				break
+			}
+			
 			const jeepHours = findNextStorm(jeepData)
 			
 			if (jeepHours === -1) response = "Strip that Jeep naked, you've got at least a couple days."
@@ -56,6 +62,12 @@ exports.handler = async (event) => {
 		case "RAIN":
 		case "STORM":
 			const rainData = await weather(args[0])
+			
+			if (!rainData) {
+				response = "Please provide a Zip Code to check for storms"
+				break
+			}
+			
 			const hoursTillRain = findNextStorm(rainData)
 			
 			if (hoursTillRain === -1) response = "No rain is in the forecast for the next 48 hours"
@@ -66,6 +78,12 @@ exports.handler = async (event) => {
 			break;
 		case "WEATHER":
 			const weatherData = await weather(args[0])
+			
+			if (!weatherData) {
+				response = "Please provide a Zip Code to check the weather"
+				break
+			}
+			
 			const currentWeather = weatherData["current"]["weather"][0]["main"]
 			response = `The current weather is: ${currentWeather}`
 			
