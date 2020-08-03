@@ -29,7 +29,7 @@ async function weather(zipCode) {
 }
 
 function isWeatherTypeRain(structure) {
-	structure["weather"]["main"].forEach((entry) => {
+	structure["weather"].forEach((entry) => {
 		if (entry["main"] === "Rain") return true
 	})
 	return  false
