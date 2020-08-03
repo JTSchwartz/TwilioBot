@@ -3,6 +3,17 @@ const fetch = require("node-fetch");
 
 const weatherApi = "***REMOVED***"
 
+function findNextStorm(weather) {
+	if (isWeatherTypeRain(weather["current"])) return 0
+	
+	const hourly = weather["hourly"]
+	
+	for (let i = 0; i < hourly.length; i++) {
+		if (isWeatherTypeRain(hourly[i])) return i + 1;
+	}
+	
+	return -1
+}
 
 async function weather(zipCode) {
 	const [lat, lon] = require('../us-zip-code-latitude-and-longitude.json')[zipCode]
@@ -10,10 +21,17 @@ async function weather(zipCode) {
 	return await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,daily&units=imperial&appid=${weatherApi}`)
 		.then(response => response.json())
 		.then(data => {
-			return [data["lat"], data["lng"]]
+			return findNextStorm(data)
 		}).catch(() => {
 			return null
 		})
+}
+
+function isWeatherTypeRain(structure) {
+	structure["weather"]["main"].forEach((entry) => {
+		if (entry["main"] === "Rain") return true
+	})
+	return  false
 }
 
 exports.handler = async (event) => {
@@ -21,15 +39,19 @@ exports.handler = async (event) => {
 	const [cmd, ...args] = content.Body.split(" ")
 	let response
 	
-	// switch (cmd.toUpperCase()) {
-	// 	case "JEEP":
-	// 	case "RAIN":
-	// 	case "STORM":
-	// 	case "WEATHER":
-			response = await weather(args[0])
-	// }
+	switch (cmd.toUpperCase()) {
+		case "JEEP":
+		case "RAIN":
+		case "STORM":
+		case "WEATHER":
+			const hoursTillRain = await weather(args[0])
+			if (hoursTillRain === -1) response = "No rain is in the forecast for the next 48 hours"
+			else if (hoursTillRain === 0) response = "It is currently raining"
+			else if (hoursTillRain === 1) response = "It will start raining in the next hour"
+			else response = `It will start raining in ${hoursTillRain} hours`
+	}
 	
-	const xmlReponse = `<Response>
+	const xmlResponse = `<Response>
 							<Message>
 								${[cmd, response].flat(Infinity)}
 							</Message>
@@ -39,6 +61,6 @@ exports.handler = async (event) => {
 		headers:    {
 			"Content-Type": "text/xml"
 		},
-		body:       xmlReponse
+		body:       xmlResponse
 	}
 }
